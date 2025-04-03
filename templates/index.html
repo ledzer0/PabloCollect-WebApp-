@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PabloCollect — Buy Package</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>PabloCollect — Select Package</h1>
+  <div class="card">
+    <h2>Basic</h2>
+    <p>RM3 / 5 credits</p>
+    <button onclick="buy('Basic', 3)">Pay with ToyyibPay</button>
+    <button onclick="qrpay('Basic', 3)">Pay with QR</button>
+  </div>
+
+  <div class="card">
+    <h2>Super</h2>
+    <p>RM10 / 50 credits</p>
+    <button onclick="buy('Super', 10)">Pay with ToyyibPay</button>
+    <button onclick="qrpay('Super', 10)">Pay with QR</button>
+  </div>
+
+  <div class="card">
+    <h2>Premium</h2>
+    <p>RM15 / Unlimited</p>
+    <button onclick="buy('Premium', 15)">Pay with ToyyibPay</button>
+    <button onclick="qrpay('Premium', 15)">Pay with QR</button>
+  </div>
+
+  <hr>
+  <h2>Command Console</h2>
+  <input type="text" id="cmdInput" placeholder="/credits" />
+  <button onclick="sendCommand()">Run</button>
+  <pre id="resultBox"></pre>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="/static/script.js"></script>
+</body>
+</html>
