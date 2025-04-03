@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Welcome to Your Dashboard</h1>
+  <div class="card">
+    <p><strong>Package:</strong> {{ user.package }}</p>
+    <p><strong>Credits:</strong> {{ user.credits }}</p>
+    <p><strong>Last Active:</strong> {{ user.last_active or "N/A" }}</p>
+    <a href="/">Go to Buy Page</a>
+  </div>
+</body>
+</html>
