@@ -1,0 +1,37 @@
+# utils/approval_utils.py
+
+import json
+from datetime import datetime
+from utils.user_utils import add_credit
+
+PENDING_FILE = 'data/pending_approvals.json'
+
+def load_pending():
+    try:
+        with open(PENDING_FILE, 'r') as f:
+            return json.load(f)
+    except:
+        return {}
+
+def save_pending(data):
+    with open(PENDING_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+
+def submit_manual_payment(user_id, amount, package):
+    data = load_pending()
+    data[str(user_id)] = {
+        'amount': amount,
+        'package': package,
+        'submitted_at': datetime.now().isoformat()
+    }
+    save_pending(data)
+
+def approve_manual_payment(user_id):
+    data = load_pending()
+    entry = data.pop(str(user_id), None)
+    if entry:
+        credits = 5 if entry['package'] == 'Basic' else 50 if entry['package'] == 'Super' else 9999
+        add_credit(user_id, credits, entry['package'])
+        save_pending(data)
+        return f"✅ Approved and added {credits} credits to user {user_id}."
+    return "❌ User not found in pending approvals."
