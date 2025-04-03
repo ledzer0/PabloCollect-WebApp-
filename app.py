@@ -3,6 +3,14 @@ from utils.payment_utils import create_invoice, verify_payment
 from utils.user_utils import get_user_data, process_command, add_credit
 from utils.approval_utils import submit_manual_payment, approve_manual_payment
 import os
+from utils.telegram_auth import check_auth, telegram_user
+
+@app.route('/auth')
+def telegram_auth():
+    if not check_auth(request.args):
+        return "❌ Authentication failed", 403
+    user_id = request.args.get('id')
+    return redirect(f'/dashboard/{user_id}')
 
 app = Flask(__name__)
 
