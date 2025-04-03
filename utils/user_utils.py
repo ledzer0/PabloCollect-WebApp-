@@ -1,48 +1,50 @@
-# utils/user_utils.py
-
-import json
+import json, os
 from datetime import datetime
 
-DATA_FILE = 'data/storage.json'
+USERS_FILE = 'data/users.json'
 
-def load_data():
-    try:
-        with open(DATA_FILE, 'r') as f:
-            return json.load(f)
-    except:
+def load_users():
+    if not os.path.exists(USERS_FILE):
         return {}
+    with open(USERS_FILE, 'r') as f:
+        return json.load(f)
 
-def save_data(data):
-    with open(DATA_FILE, 'w') as f:
+def save_users(data):
+    with open(USERS_FILE, 'w') as f:
         json.dump(data, f, indent=2)
 
 def get_user_data(user_id):
-    data = load_data()
-    return data.get(str(user_id), {
-        "package": "None",
+    users = load_users()
+    user = users.get(str(user_id), {
         "credits": 0,
-        "last_active": None
+        "package": "Free",
+        "joined": datetime.now().isoformat()
     })
+    return user
 
-def add_credit(user_id, amount, package="Manual"):
-    data = load_data()
-    user = data.get(str(user_id), {})
-    user['credits'] = user.get('credits', 0) + amount
-    user['package'] = package
-    user['last_active'] = datetime.now().isoformat()
-    data[str(user_id)] = user
-    save_data(data)
+def add_credit(user_id, amount, package=None):
+    users = load_users()
+    uid = str(user_id)
+    if uid not in users:
+        users[uid] = {"credits": 0, "package": "Free", "joined": datetime.now().isoformat()}
+    users[uid]['credits'] += amount
+    if package:
+        users[uid]['package'] = package
+    save_users(users)
 
 def process_command(user_id, command):
     user = get_user_data(user_id)
     if command == "/credits":
-        return f"You have {user.get('credits', 0)} credits."
+        return f"💳 You have {user['credits']} credits."
+    elif command == "/perks":
+        return "✨ Basic: 5 credits | Super: 50 credits | Premium: Unlimited"
     elif command == "/mykey":
-        return f"Package: {user.get('package', 'None')}"
+        return f"🔑 Package: {user['package']}"
     elif command == "/use":
-        if user.get('credits', 0) > 0:
-            add_credit(user_id, -1)
-            return "✅ Credit used!"
-        return "❌ Not enough credits."
+        if user['credits'] > 0:
+            user['credits'] -= 1
+            save_users({**load_users(), str(user_id): user})
+            return "✅ 1 credit used."
+        return "❌ No credits left!"
     else:
-        return "Unknown command."
+        return "❓ Unknown command."
